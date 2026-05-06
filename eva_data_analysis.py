@@ -1,3 +1,4 @@
+# Import packages
 import json
 import csv
 import datetime as dt
@@ -15,7 +16,7 @@ data=[]
 
 for i in range(375):
     line=data_f.readline()
-    print(line)
+    # print(line)
     data.append(json.loads(line[1:-1]))
 #data.pop(0)
 ## Comment out this bit if you don't want the spreadsheet
