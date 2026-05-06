@@ -1,6 +1,22 @@
 # Import external packages
 import matplotlib.pyplot as plt
 import pandas as pd
+import sys
+import os
+
+def main(input_file, output_file, graph_file):
+   
+    print('-- Start --')
+    print(f'Read in data from file {input_file}')
+    eva_data= read_json_to_dataframe(input_file)
+
+    print(f'Save data to file {output_file}')
+    write_dataframe_to_csv(eva_data, output_file)
+
+    print('Plot results')
+    plot_cummulative_time(eva_data, graph_file)
+
+    print('--END--')
 
 
 def read_json_to_dataframe(input_path):
@@ -53,7 +69,7 @@ def plot_cummulative_time(df, graph_path):
     df.sort_values('date', inplace=True)
     '''Add a new column to the dataframe to convert duration of 
     spacewalk to hours '''
-    df['duration_hours'] = df['duration'].str.split(":").apply(lambda x: int(x[0]) + int(x[1])/60)
+    df = add_duration_hours(df)
     # Caculate the total time spent on spacewalks throughout history
     df['cumulative_time'] = df['duration_hours'].cumsum()
 
@@ -67,20 +83,64 @@ def plot_cummulative_time(df, graph_path):
     plt.show()
     return(1)
 
-print('-- Start --')
+def text_to_duration(duration):
+    """
+    Convert a text format duration "HH:MM" to duration in hours
 
-# Data source: https://data.nasa.gov/resource/eva.json (with modifications)
-input_file = open('./eva_data.json', 'r', encoding='ascii')
-output_file = open('./eva_data.csv', 'w', encoding='utf-8')
-graph_file = './cumulative_eva_graph.png'
+    Args:
+        duration (str): The text format duration
 
-print(f'Read in data from file {input_file}')
-eva_data= read_json_to_dataframe(input_file)
+    Returns:
+        duration_hours (float): The duration in hours
+    """
+    hours, minutes = duration.split(":")
+    duration_hours = int(hours) + int(minutes)/6  # there is an intentional bug on this line (should divide by 60 not 6)
+    return duration_hours
 
-print(f'Save data to file {output_file}')
-write_dataframe_to_csv(eva_data, output_file)
 
-print('Plot results')
-plot_cummulative_time(eva_data, graph_file)
+def add_duration_hours(df):
+    """
+    Add duration in hours (duration_hours) variable to the dataset
 
-print('--END--')
+    Args:
+        df (pd.DataFrame): The input dataframe.
+
+    Returns:
+        df_copy (pd.DataFrame): A copy of df with the new duration_hours variable added
+    """
+    df_copy = df.copy()
+    df_copy["duration_hours"] = df_copy["duration"].apply(
+        text_to_duration
+    )
+    return df_copy
+
+
+if __name__ == "__main__":
+
+    # def create_results_folder(path):
+    #     """
+        
+    #     """
+    #     # Get base folder 
+    #     base_folder = os.path.dirname(os.path.dirname(path))
+    #     # Create save path name 
+    #     results_path = base_folder + '/results/'
+    #     if os.path.exists(results_path) == False: 
+    #         os.makedirs(results_path)
+
+    if len(sys.argv) < 3: 
+        # Data source: https://data.nasa.gov/resource/eva.json (with modifications)
+        input_file = open('./Data/eva_data.json', 'r', encoding='ascii')
+        output_file = open('./results/eva_data.csv', 'w', encoding='utf-8')
+        print("Using default input and output lines")
+    else:
+        # Use the input arguments from the command line 
+        input_file = sys.argv[1]
+        create_results_folder(input_file)
+        output_file = sys.argv[2]
+        print("Using custom input and output filenames")
+
+    graph_file = './cumulative_eva_graph.png'
+    main(input_file, output_file, graph_file)
+
+
