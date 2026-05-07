@@ -94,7 +94,7 @@ def text_to_duration(duration):
         duration_hours (float): The duration in hours
     """
     hours, minutes = duration.split(":")
-    duration_hours = int(hours) + int(minutes)/6  # there is an intentional bug on this line (should divide by 60 not 6)
+    duration_hours = int(hours) + int(minutes)/60  # there is an intentional bug on this line (should divide by 60 not 6)
     return duration_hours
 
 
@@ -117,17 +117,6 @@ def add_duration_hours(df):
 
 if __name__ == "__main__":
 
-    # def create_results_folder(path):
-    #     """
-        
-    #     """
-    #     # Get base folder 
-    #     base_folder = os.path.dirname(os.path.dirname(path))
-    #     # Create save path name 
-    #     results_path = base_folder + '/results/'
-    #     if os.path.exists(results_path) == False: 
-    #         os.makedirs(results_path)
-
     if len(sys.argv) < 3: 
         # Data source: https://data.nasa.gov/resource/eva.json (with modifications)
         input_file = open('./Data/eva_data.json', 'r', encoding='ascii')
@@ -140,7 +129,7 @@ if __name__ == "__main__":
         output_file = sys.argv[2]
         print("Using custom input and output filenames")
 
-    graph_file = './cumulative_eva_graph.png'
+    graph_file = './results/cumulative_eva_graph.png'
     main(input_file, output_file, graph_file)
 
 
