@@ -1,0 +1,18 @@
+site_name: Spacewalks Documentation
+# How to handle URL documentation
+use_directory_urls: false
+theme:
+  name: "material"
+# Don't choose font sytle
+  font: false
+# Structure of the documentation that we want. 
+nav:
+  - Spacewalks Documentation: index.md
+  - Tutorials: tutorials.md
+  - How-To Guides: how-to-guides.md
+  - Reference: reference.md
+  - Background: explanation.md
+
+# Add plugins 
+plugins:
+  -  mkdocstrings
