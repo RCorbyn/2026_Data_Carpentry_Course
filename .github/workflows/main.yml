@@ -1,27 +1,28 @@
 name: CI 
-
+# When the code is pushed to the repository
 on: push
 
 jobs:
-
+  # Build a test environment and then run the test
   build-and-test:
-
+    # Set the base environemnt 
     runs-on: ubuntu-latest
-
+    # Steps to run 
     steps:
-
+      # Check out the whole repository for testing
     - name: Checkout repository
       uses: actions/checkout@v4
-
+      # Install python 3.12 for testing
     - name: Setup python
       uses: actions/setup-python@v5
       with:
         python-version: "3.12"
-    
+    # Install all requirements to run the testing 
+    # need everything to run the code as well. 
     - name: Install Python dependencies
       run: |
         python3 -m pip install -r requirements.txt
-    
+    # Run the testing with pytest. 
     - name: Test with Pytest
       run: |
         python3 -m pytest --cov
